@@ -64,6 +64,16 @@ CHOICES = {
     "보": "✋",
 }
 
+# 점수와 이전 라운드 결과를 세션에 저장합니다.
+if "user_score" not in st.session_state:
+    st.session_state["user_score"] = 0
+
+if "computer_score" not in st.session_state:
+    st.session_state["computer_score"] = 0
+
+if "last_round" not in st.session_state:
+    st.session_state["last_round"] = None
+
 st.markdown(
     '<div class="main-title">✊ 가위바위보 챌린지</div>',
     unsafe_allow_html=True,
@@ -72,6 +82,19 @@ st.markdown(
     '<div class="subtitle">컴퓨터와 한 판 대결해 봐요! 원하는 패를 골라주세요 👇</div>',
     unsafe_allow_html=True,
 )
+
+# 현재 점수를 화면 상단에서 항상 확인할 수 있습니다.
+score_col1, score_col2, score_col3 = st.columns([2, 1, 2])
+with score_col1:
+    st.metric("🙋 사용자 점수", st.session_state["user_score"])
+with score_col2:
+    st.markdown(
+        "<div style='text-align:center; padding-top: 1.7rem; "
+        "font-size: 1.4rem; font-weight: 800;'>:</div>",
+        unsafe_allow_html=True,
+    )
+with score_col3:
+    st.metric("🤖 컴퓨터 점수", st.session_state["computer_score"])
 
 user_choice = st.radio(
     "당신의 선택",
@@ -87,9 +110,6 @@ if st.button("대결하기! 🎮", use_container_width=True, type="primary"):
         result_text = "무승부!"
         result_emoji = "🤝"
         result_color = "#6c63a8"
-        st.session_state["wins"] = st.session_state.get("wins", 0)
-        st.session_state["losses"] = st.session_state.get("losses", 0)
-        st.session_state["draws"] = st.session_state.get("draws", 0) + 1
     elif (
         (user_choice == "가위" and computer_choice == "보")
         or (user_choice == "바위" and computer_choice == "가위")
@@ -98,16 +118,12 @@ if st.button("대결하기! 🎮", use_container_width=True, type="primary"):
         result_text = "승리!"
         result_emoji = "🎉"
         result_color = "#198754"
-        st.session_state["wins"] = st.session_state.get("wins", 0) + 1
-        st.session_state["losses"] = st.session_state.get("losses", 0)
-        st.session_state["draws"] = st.session_state.get("draws", 0)
+        st.session_state["user_score"] += 1
     else:
         result_text = "패배!"
         result_emoji = "🥲"
         result_color = "#dc3545"
-        st.session_state["wins"] = st.session_state.get("wins", 0)
-        st.session_state["losses"] = st.session_state.get("losses", 0) + 1
-        st.session_state["draws"] = st.session_state.get("draws", 0)
+        st.session_state["computer_score"] += 1
 
     st.session_state["last_round"] = {
         "user_choice": user_choice,
@@ -117,7 +133,7 @@ if st.button("대결하기! 🎮", use_container_width=True, type="primary"):
         "result_color": result_color,
     }
 
-if "last_round" in st.session_state:
+if st.session_state["last_round"] is not None:
     round_result = st.session_state["last_round"]
 
     st.markdown(
@@ -141,20 +157,17 @@ if "last_round" in st.session_state:
 
 st.markdown("### 🏆 오늘의 전적")
 
-wins = st.session_state.get("wins", 0)
-draws = st.session_state.get("draws", 0)
-losses = st.session_state.get("losses", 0)
+wins = st.session_state["user_score"]
+losses = st.session_state["computer_score"]
 
-score_cols = st.columns(3)
+score_cols = st.columns(2)
 score_cols[0].metric("승리 🎉", wins)
-score_cols[1].metric("무승부 🤝", draws)
-score_cols[2].metric("패배 🥲", losses)
+score_cols[1].metric("패배 🥲", losses)
 
-if st.button("전적 초기화 🔄", use_container_width=True):
-    st.session_state["wins"] = 0
-    st.session_state["draws"] = 0
-    st.session_state["losses"] = 0
-    st.session_state.pop("last_round", None)
+if st.button("점수 초기화 🔄", use_container_width=True):
+    st.session_state["user_score"] = 0
+    st.session_state["computer_score"] = 0
+    st.session_state["last_round"] = None
     st.rerun()
 
 st.caption("한 판 더 도전하고 오늘의 승리를 쌓아보세요! 🍀")
