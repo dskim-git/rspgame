@@ -9,17 +9,18 @@ st.set_page_config(
     layout="centered",
 )
 
-# 깔끔하고 재미있는 화면을 위한 간단한 CSS
+# 가독성이 좋은 대비 중심 다크 테마 CSS
 st.markdown(
     """
     <style>
     .stApp {
-        background: linear-gradient(135deg, #f5f7ff 0%, #fff5f8 100%);
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: #f8fafc;
     }
 
     .main-title {
         text-align: center;
-        color: #342a63;
+        color: #f8fafc;
         font-size: 2.5rem;
         font-weight: 800;
         margin-bottom: 0.3rem;
@@ -27,24 +28,24 @@ st.markdown(
 
     .subtitle {
         text-align: center;
-        color: #68627e;
+        color: #cbd5e1;
         font-size: 1.05rem;
         margin-bottom: 2rem;
     }
 
     .result-card {
-        background: rgba(255, 255, 255, 0.9);
-        border: 1px solid #e8e4f5;
+        background: rgba(15, 23, 42, 0.72);
+        border: 1px solid #334155;
         border-radius: 20px;
         padding: 1.5rem;
         text-align: center;
-        box-shadow: 0 8px 24px rgba(52, 42, 99, 0.08);
+        box-shadow: 0 10px 28px rgba(2, 6, 23, 0.45);
         margin-top: 1rem;
     }
 
     .choice {
         font-size: 1.25rem;
-        color: #342a63;
+        color: #f1f5f9;
         margin: 0.6rem 0;
     }
 
@@ -52,6 +53,21 @@ st.markdown(
         font-size: 1.8rem;
         font-weight: 800;
         margin-top: 1rem;
+    }
+
+    /* 기본 텍스트/라벨 대비 강화 */
+    .stMarkdown, .stText, .stCaption, label, p, span, div {
+        color: #e2e8f0;
+    }
+
+    /* 라디오/메트릭/버튼 주변 가독성 강화 */
+    .stMetricLabel, .stMetricValue {
+        color: #f8fafc !important;
+    }
+
+    .stButton > button {
+        border-radius: 12px;
+        font-weight: 700;
     }
     </style>
     """,
@@ -90,7 +106,7 @@ with score_col1:
 with score_col2:
     st.markdown(
         "<div style='text-align:center; padding-top: 1.7rem; "
-        "font-size: 1.4rem; font-weight: 800;'>:</div>",
+        "font-size: 1.4rem; font-weight: 800; color:#f8fafc;'>:</div>",
         unsafe_allow_html=True,
     )
 with score_col3:
@@ -109,7 +125,7 @@ if st.button("대결하기! 🎮", use_container_width=True, type="primary"):
     if user_choice == computer_choice:
         result_text = "무승부!"
         result_emoji = "🤝"
-        result_color = "#6c63a8"
+        result_color = "#c4b5fd"
     elif (
         (user_choice == "가위" and computer_choice == "보")
         or (user_choice == "바위" and computer_choice == "가위")
@@ -117,12 +133,12 @@ if st.button("대결하기! 🎮", use_container_width=True, type="primary"):
     ):
         result_text = "승리!"
         result_emoji = "🎉"
-        result_color = "#198754"
+        result_color = "#34d399"
         st.session_state["user_score"] += 1
     else:
         result_text = "패배!"
         result_emoji = "🥲"
-        result_color = "#dc3545"
+        result_color = "#f87171"
         st.session_state["computer_score"] += 1
 
     st.session_state["last_round"] = {
